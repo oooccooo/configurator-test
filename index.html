@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test</title>
+    <style>
+      #overlay {
+        position: fixed; /* Sit on top of the page content */
+        display: none; /* Hidden by default */
+        width: 100%; /* Full width (cover the whole page) */
+        height: 100%; /* Full height (cover the whole page) */
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgb(0, 0, 0); /* Black background */
+        z-index: 2;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <div id="player" style="height: 100vh"></div>
+      <div id="overlay"></div>
+    </div>
+    <script src="https://preview.threekit.com/app/js/threekit-player.js"></script>
+    <script>
+      // Berluti
+      const ASSET_ID = '0d53e0e1-e485-42ba-840f-64443e7c81c7';
+      const THREEKIT_TOKEN = '3d21943d-ddd1-4cbe-a99e-aaf97926e534'; // localhost:8080
+
+      threekitPlayer({
+        authToken: THREEKIT_TOKEN,
+        el: document.getElementById('player'),
+        // stageId: STAGE_ID,
+        assetId: ASSET_ID,
+        initialConfiguration: {},
+        showConfigurator: true,
+        // showAR: true,
+        // showLoadingProgress: false,
+        display: 'image',
+      }).then(async (api) => {
+        window.api = api;
+        window.player = api;
+        const el = document.getElementById('overlay');
+        // el.style.display = 'block';
+        // api.enableApi('player');
+        // api.enableApi('store');
+        // api.tools.addTool('zoom');
+        const configurator = await api.getConfigurator();
+        window.configurator = configurator;
+        api.on(api.scene.PHASES.RENDERED, () => {
+          el.style.display = 'none';
+        });
+
+        return api;
+      });
+    </script>
+  </body>
+</html>
