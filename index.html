@@ -46,7 +46,7 @@
         // el.style.display = 'block';
         // api.enableApi('player');
         // api.enableApi('store');
-        // api.tools.addTool('zoom');
+        api.tools.addTool('zoom');
         const configurator = await api.getConfigurator();
         window.configurator = configurator;
         api.on(api.scene.PHASES.RENDERED, () => {
