@@ -80,7 +80,7 @@
         <div class="container">
           <img
             src="https://cdn.threehub.com/clients/berluti/configurations/OfficeClubChair-PlainVeneziaLeather_TobaccoBis-ScrittoVeneziaLeather_Rhum-OakWood_Black-Front.jpg"
-            style="height: 1000px"
+            style="width: 100%"
           />
         </div>
       </div>
@@ -162,7 +162,7 @@
         return api;
       });
 
-      const HEIGHTS = [1000, 2000, 3000];
+      const WIDTHS = [100, 150, 200];
       let index = 0;
 
       const container = document.getElementsByClassName('container')[0];
@@ -187,8 +187,8 @@
       container.addEventListener('mouseup', (ev) => {
         dragging = false;
         if (click) {
-          index = (index + 1) % HEIGHTS.length;
-          img.style.height = `${HEIGHTS[index]}px`;
+          index = (index + 1) % WIDTHS.length;
+          img.style.width = `${WIDTHS[index]}%`;
         }
       });
       container.addEventListener('mouseleave', (ev) => {
