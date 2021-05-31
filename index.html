@@ -15,24 +15,122 @@
         background-color: rgb(0, 0, 0); /* Black background */
         z-index: 2;
       }
+
+      .container {
+        width: 100%;
+        height: 2000px;
+        overflow: hidden;
+      }
+
+      /* The Modal (background) */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: #474e5d;
+        padding-top: 50px;
+      }
+
+      /* Modal Content/Box */
+      .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+      }
+
+      /* The Modal Close Button (x) */
+      .close {
+        position: absolute;
+        right: 35px;
+        top: 15px;
+        font-size: 40px;
+        font-weight: bold;
+        color: #f1f1f1;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: #f44336;
+        cursor: pointer;
+      }
     </style>
   </head>
 
   <body>
     <div style="height: 100vh">
-      <div
-        id="player"
-        style="width: 100%; height: 100%; max-height: 800px"
-      ></div>
+      <div id="player" style="width: 100%; height: 40%"></div>
       <div id="overlay"></div>
+
+      <button onclick="document.getElementById('id01').style.display='block'">
+        Open Modal
+      </button>
+      <div id="id01" class="modal">
+        <span
+          onclick="document.getElementById('id01').style.display='none'"
+          class="close"
+          title="Close Modal"
+          >×</span
+        >
+        <div class="container">
+          <img
+            src="https://cdn.threehub.com/clients/berluti/configurations/OfficeClubChair-PlainVeneziaLeather_TobaccoBis-ScrittoVeneziaLeather_Rhum-OakWood_Black-Front.jpg"
+          />
+        </div>
+      </div>
+
       <a
-        href="https://s3.ca-central-1.amazonaws.com/preferred.clara.io/clients/berluti/swatches/OfficeClubChair-PlainVeneziaLeather_TobaccoBis-ScrittoVeneziaLeather_Rhum-OakWood_Black-Front.jpg"
+        href="https://cdn.threehub.com/clients/berluti/configurations/OfficeClubChair-PlainVeneziaLeather_TobaccoBis-ScrittoVeneziaLeather_Rhum-OakWood_Black-Front.jpg"
         >Open Image</a
       >
     </div>
     <script src="https://preview.threekit.com/app/js/threekit-player.js"></script>
     <script>
+      // function getDevice() {
+      //   const runtimeInfo = {};
+      //   runtimeInfo.isIE = runtimeInfo.name === 'ie';
+      //   runtimeInfo.isMobile = false;
+      //   runtimeInfo.isIOS = false;
+      //   runtimeInfo.isAndroid = false;
+      //   runtimeInfo.isAndroidTablet = false;
+      //   runtimeInfo.isMac = false;
+
+      //   if (window.navigator) {
+      //     const userAgent = window.navigator.userAgent;
+      //     runtimeInfo.isIOS =
+      //       /iPad|iPhone|iPod/.test(userAgent) ||
+      //       (navigator.platform === 'MacIntel' &&
+      //         navigator.maxTouchPoints > 1 &&
+      //         !window.MSStream);
+      //     runtimeInfo.isAndroid = /Android/i.test(userAgent);
+      //     const isMSPhone = /IEMobile|Windows Phone|Lumia/i.test(userAgent);
+      //     const isChromebook = /CrOS/i.test(userAgent);
+      //     const isBlackberry = /Blackberry|webOS/i.test(userAgent);
+      //     runtimeInfo.isSafari = /^((?!chrome|android).)*safari/i.test(
+      //       navigator.userAgent
+      //     );
+      //     runtimeInfo.isMac = /Mac/i.test(userAgent);
+      //     runtimeInfo.isMobile =
+      //       runtimeInfo.isIOS ||
+      //       runtimeInfo.isAndroid ||
+      //       isMSPhone ||
+      //       isChromebook ||
+      //       isBlackberry;
+      //     runtimeInfo.isAndroidTablet =
+      //       runtimeInfo.isAndroid && /^(?!.*Mobile).*$/.test(userAgent);
+      //     window.runtimeInfo = runtimeInfo;
+      //   }
+      //   return runtimeInfo;
+      // }
+      // const device = getDevice();
+
       // Berluti
+
       const ASSET_ID = '0d53e0e1-e485-42ba-840f-64443e7c81c7';
       const THREEKIT_TOKEN = '3d21943d-ddd1-4cbe-a99e-aaf97926e534'; // localhost:8080
 
@@ -62,6 +160,71 @@
 
         return api;
       });
+
+      const container = document.getElementsByClassName('container')[0];
+      let cHeight;
+      let cWidth;
+      const img = container.getElementsByTagName('img')[0];
+      const iHeight = img.height;
+      const iWidth = img.width;
+
+      let dragging = false;
+      let previousX, previousY;
+      container.addEventListener('mousedown', (ev) => {
+        cHeight = container.clientHeight;
+        cWidth = container.clientWidth;
+        dragging = true;
+        ev.preventDefault();
+        previousX = ev.clientX;
+        previousY = ev.clientY;
+      });
+      container.addEventListener('mouseup', (ev) => {
+        dragging = false;
+      });
+      container.addEventListener('mouseleave', (ev) => {
+        dragging = false;
+      });
+      container.addEventListener('mousemove', (ev) => {
+        if (dragging) {
+          ev.preventDefault();
+          var directionX = previousX - ev.clientX > 0 ? 1 : -1;
+          var directionY = previousY - ev.clientY > 0 ? 1 : -1;
+
+          const left = container.scrollLeft + (previousX - ev.clientX);
+          const top = container.scrollTop + (previousY - ev.clientY);
+
+          container.scrollTo(left, top);
+
+          previousX = ev.clientX;
+          previousY = ev.clientY;
+        }
+      });
+      container.ontouchstart = function (e) {
+        const touch = e.touches[0];
+        const mouseEvent = new MouseEvent('mousedown', {
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+        });
+        container.dispatchEvent(mouseEvent);
+        //  e.preventDefault();
+      };
+      container.ontouchmove = function (e) {
+        if (e.targetTouches.length == 1) {
+          const touch = e.touches[0];
+          const mouseEvent = new MouseEvent('mousemove', {
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+          });
+
+          container.dispatchEvent(mouseEvent);
+          // e.preventDefault();
+        }
+      };
+      container.ontouchend = function (e) {
+        const mouseEvent = new MouseEvent('mouseup', {});
+        document.dispatchEvent(mouseEvent);
+        //  e.preventDefault();
+      };
     </script>
   </body>
 </html>
