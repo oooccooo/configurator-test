@@ -17,8 +17,12 @@
       }
 
       .container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         width: 100%;
-        height: 1000px;
+        height: 80%;
         overflow: hidden;
       }
 
@@ -148,33 +152,43 @@
       }).then(async (api) => {
         window.api = api;
         window.player = api;
-        const el = document.getElementById('overlay');
-        // el.style.display = 'block';
+        const overlay = document.getElementById('overlay');
+        // overlay.style.display = 'block';
         // api.enableApi('player');
         // api.enableApi('store');
         api.tools.addTool('zoom');
         const configurator = await api.getConfigurator();
         window.configurator = configurator;
         api.on(api.scene.PHASES.RENDERED, () => {
-          el.style.display = 'none';
+          overlay.style.display = 'none';
         });
 
         return api;
       });
 
-      const WIDTHS = [100, 150, 200];
+      const WIDTHS = ['100%', '150%', '200%'];
       let index = 0;
 
       const container = document.getElementsByClassName('container')[0];
       let cHeight;
       let cWidth;
       const img = container.getElementsByTagName('img')[0];
+      const modal = document.getElementById('id01');
       // const iHeight = img.height;
       // const iWidth = img.width;
-
       let dragging = false;
       let click = true;
-      let previousX, previousY;
+      let previousX = 0,
+        previousY = 0;
+
+      document.getElementById('player').onclick = (e) => {
+        modal.style.display = 'block';
+      };
+      modal.onmousedown = (e) => {
+        if (!e.path.some((e) => e == container) && !dragging) {
+          modal.style.display = 'none';
+        }
+      };
       container.addEventListener('mousedown', (ev) => {
         cHeight = container.clientHeight;
         cWidth = container.clientWidth;
@@ -183,12 +197,14 @@
         ev.preventDefault();
         previousX = ev.clientX;
         previousY = ev.clientY;
+
+        // console.log(previousX, previousY, ev);
       });
       container.addEventListener('mouseup', (ev) => {
         dragging = false;
         if (click) {
           index = (index + 1) % WIDTHS.length;
-          img.style.width = `${WIDTHS[index]}%`;
+          img.style.width = WIDTHS[index];
         }
       });
       container.addEventListener('mouseleave', (ev) => {
@@ -198,13 +214,16 @@
         if (dragging) {
           click = false;
           ev.preventDefault();
-          var directionX = previousX - ev.clientX > 0 ? 1 : -1;
-          var directionY = previousY - ev.clientY > 0 ? 1 : -1;
+          const directionX = previousX - ev.clientX > 0 ? 1 : -1;
+          const directionY = previousY - ev.clientY > 0 ? 1 : -1;
+
+          // console.log(ev.clientX, ev.clientY);
 
           const left = container.scrollLeft + (previousX - ev.clientX);
           const top = container.scrollTop + (previousY - ev.clientY);
 
           container.scrollTo(left, top);
+          // console.log(left, top);
 
           previousX = ev.clientX;
           previousY = ev.clientY;
